@@ -3,7 +3,7 @@ Descripttion:
 version: 
 Author: Catop
 Date: 2021-03-09 23:14:51
-LastEditTime: 2021-03-12 09:13:58
+LastEditTime: 2021-03-12 12:22:09
 '''
 import sys
 import os
@@ -143,20 +143,17 @@ def pfm_private(user_id,message,message_id):
     else:
         #接收其他人消息
         user_info = dbconn.get_friend_info(user_id)
+        mid = dbconn.save_msg(user_id,message)
+        ctime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        
         if('all' in status):
             #转发全部消息
             goapi_recv.sendMsg(pusher_user_id,f"[{user_info['mark_name']}]\n{message}")
-            return "0"
         else:
-
             if(user_info['user_type'] in status):
-                mid = dbconn.save_msg(user_id,message)
-                ctime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
                 send_res = goapi_recv.sendMsg(pusher_user_id,f"[{user_info['mark_name']}]\n\n{message}\n===================\n{ctime}\nid={mid}")
-                fwd_mid = send_res['data']['message_id']
                 
-
-
             else:
                 #暂时不转发的消息逻辑
                 pass
@@ -164,12 +161,15 @@ def pfm_private(user_id,message,message_id):
         #无论是否转发，私聊消息全部计数
         dbconn.count_plus(user_id)
 
+
     return 0
 
 def pfm_group(user_id,group_id,sender,message):
     
     group_info = dbconn.get_group_info(group_id)
     user_info = dbconn.get_friend_info(user_id)
+    dbconn.count_plus(group_id)
+
 
     if(user_info):
         if(user_info['user_type'] in status):
@@ -202,10 +202,6 @@ def pfm_group(user_id,group_id,sender,message):
     else:
         #暂时不转发的消息逻辑
         pass
-
-    dbconn.count_plus(group_id)
-
-    
 
 
 

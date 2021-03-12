@@ -3,7 +3,7 @@ Descripttion:
 version: 
 Author: Catop
 Date: 2021-03-08 22:38:09
-LastEditTime: 2021-03-11 23:55:03
+LastEditTime: 2021-03-12 12:00:14
 '''
 #coding:utf-8
 import os
@@ -193,8 +193,8 @@ def get_type_list(user_type):
     return type_dict
     
 def save_msg(user_id,message):
-    #ctime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    ctime = '2021-03-11 23:44:23'
+    ctime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    #ctime = '2021-03-11 23:44:23'
     sql = "INSERT INTO QF_msg(user_id,message,time) VALUES(%s,%s,%s)"
     params = [user_id,message,ctime]
     cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
