@@ -3,7 +3,7 @@ Descripttion:
 version: 
 Author: Catop
 Date: 2021-03-08 22:38:09
-LastEditTime: 2021-03-09 23:14:38
+LastEditTime: 2021-03-11 23:55:03
 '''
 #coding:utf-8
 import os
@@ -11,6 +11,7 @@ import sys
 import pymysql
 import json
 import goapi_recv
+import time
 
 
 cwd = os.path.dirname(os.path.realpath(__file__))
@@ -191,6 +192,31 @@ def get_type_list(user_type):
     
     return type_dict
     
+def save_msg(user_id,message):
+    #ctime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    ctime = '2021-03-11 23:44:23'
+    sql = "INSERT INTO QF_msg(user_id,message,time) VALUES(%s,%s,%s)"
+    params = [user_id,message,ctime]
+    cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
+    conn.ping(reconnect=True)
+    cursor.execute(sql,params)
+    mid = conn.insert_id()
+    conn.commit()
+
+    return mid
+    
+def get_msg(mid):
+    sql = "SELECT user_id FROM QF_msg WHERE id=%s LIMIT 1"
+    params = [mid]
+    cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
+    conn.ping(reconnect=True)
+    cursor.execute(sql,params)
+    msg_info = cursor.fetchone()
+    
+    return msg_info
+
+
+
 
 if __name__ == "__main__":
     #update_friends_info(goapi_recv.get_friends_list())
@@ -200,4 +226,6 @@ if __name__ == "__main__":
     #set_type('1157994379','work')
     #print(get_friend_info('29242764'))
     #print(get_group_info('275733157'))
-    print(get_type_list('work'))
+    #print(get_type_list('work'))
+    #print(save_msg('601179193','test'))
+    print(get_msg(18))
