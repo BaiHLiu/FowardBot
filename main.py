@@ -12,6 +12,7 @@ import time
 from flask import Flask,request,jsonify
 import goapi_recv
 import dbconn
+import logging
 
 
 cwd = os.path.dirname(os.path.realpath(__file__))
@@ -29,7 +30,6 @@ pusher_user_id = '2026679347'
 app = Flask(__name__)
 @app.route('/', methods=['POST'])
 def getEvent():
-    
 
     data = request.json
     post_type = data.get('post_type')
@@ -208,6 +208,6 @@ def pfm_group(user_id,group_id,sender,message):
 if __name__ == "__main__":
     dbconn.update_friends_info(goapi_recv.get_friends_list())
     dbconn.update_group_info(goapi_recv.get_group_list())
-
+    
     app.run(host=flask_addr,port=flask_port,debug=True)
     
