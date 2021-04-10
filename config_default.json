@@ -1,0 +1,17 @@
+{
+    //消息存储数据库配置（mysql）
+    "DataBase": {
+        "Address": "",
+        "DBname": "",
+        "UserName": "",
+        "PassWord": ""
+    },
+    
+    //go-cq参数
+    "gocq-recv": {
+        "Reverse": {
+            "Address": "127.0.0.1",
+            "Port": "5008"
+        }
+    }
+}

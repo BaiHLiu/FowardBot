@@ -13,6 +13,7 @@ from flask import Flask,request,jsonify
 import goapi_recv
 import dbconn
 import logging
+import trigger
 
 
 cwd = os.path.dirname(os.path.realpath(__file__))
@@ -169,6 +170,7 @@ def pfm_group(user_id,group_id,sender,message):
     group_info = dbconn.get_group_info(group_id)
     user_info = dbconn.get_friend_info(user_id)
     dbconn.count_plus(group_id)
+    dbconn.save_msg(user_id,message,type='group',group_id=group_id)
 
 
     if(user_info):
@@ -209,5 +211,5 @@ if __name__ == "__main__":
     dbconn.update_friends_info(goapi_recv.get_friends_list())
     dbconn.update_group_info(goapi_recv.get_group_list())
     
-    app.run(host=flask_addr,port=flask_port,debug=True)
+    app.run(host=flask_addr,port=flask_port,debug=False)
     

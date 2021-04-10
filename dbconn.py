@@ -192,11 +192,17 @@ def get_type_list(user_type):
     
     return type_dict
     
-def save_msg(user_id,message):
+def save_msg(user_id,message,type='private',group_id=''):
     ctime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     #ctime = '2021-03-11 23:44:23'
-    sql = "INSERT INTO QF_msg(user_id,message,time) VALUES(%s,%s,%s)"
-    params = [user_id,message,ctime]
+    
+    if(type == 'private'):
+        sql = "INSERT INTO QF_msg(user_id,message,time) VALUES(%s,%s,%s)"
+        params = [user_id,message,ctime]
+    elif(type == 'group'):
+        sql = "INSERT INTO QF_msg_group(user_id,group_id,message,time) VALUES(%s,%s,%s,%s)"
+        params = [user_id,group_id,message,ctime]
+
     cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
     conn.ping(reconnect=True)
     cursor.execute(sql,params)
@@ -216,6 +222,18 @@ def get_msg(mid):
     return msg_info
 
 
+def get_today_msg_count():
+    """获取当日接受到的私聊消息数量"""
+    ctime = time.strftime("%Y-%m-%d", time.localtime())
+    time_start = str(ctime)+" 00:00:00"
+    time_end = str(ctime)+" 24:00:00"
+    sql = f"SELECT COUNT(*) FROM QF_msg WHERE time>='{time_start}' AND time<='{time_end}'"
+    cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
+    conn.ping(reconnect=True)    
+    cursor.execute(sql)
+    count_num = cursor.fetchone()['COUNT(*)']
+    
+    return count_num
 
 
 if __name__ == "__main__":
@@ -228,4 +246,5 @@ if __name__ == "__main__":
     #print(get_group_info('275733157'))
     #print(get_type_list('work'))
     #print(save_msg('601179193','test'))
-    print(get_msg(18))
+    #print(get_msg(18))
+    print(get_today_msg_count())
