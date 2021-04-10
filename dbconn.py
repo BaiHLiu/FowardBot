@@ -3,7 +3,7 @@ Descripttion:
 version: 
 Author: Catop
 Date: 2021-03-08 22:38:09
-LastEditTime: 2021-03-12 12:00:14
+LastEditTime: 2021-04-10 13:47:09
 '''
 #coding:utf-8
 import os
@@ -12,6 +12,7 @@ import pymysql
 import json
 import goapi_recv
 import time
+import datetime
 
 
 cwd = os.path.dirname(os.path.realpath(__file__))
@@ -235,6 +236,24 @@ def get_today_msg_count():
     
     return count_num
 
+def set_watch(user_name,time_period):
+    """同名群和好友一并设置watch"""
+    cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
+    time_now = datetime.datetime.now()
+    time_period = int(time_period)
+    watch_endtime = (time_now+datetime.timedelta(minutes=time_period)).strftime("%Y-%m-%d %H:%M:%S")
+    
+    sql = f"UPDATE QF_user SET watch_endtime='{watch_endtime}' WHERE mark_name like '%{user_name}%' LIMIT 1"
+    cursor.execute(sql)
+    effectRow = cursor.rowcount
+
+    sql = f"UPDATE QF_group SET watch_endtime='{watch_endtime}' WHERE group_name like '%{user_name}%' LIMIT 1"
+    cursor.execute(sql)
+    effectRow += cursor.rowcount
+    conn.commit()
+    
+    return effectRow
+
 
 if __name__ == "__main__":
     #update_friends_info(goapi_recv.get_friends_list())
@@ -247,4 +266,6 @@ if __name__ == "__main__":
     #print(get_type_list('work'))
     #print(save_msg('601179193','test'))
     #print(get_msg(18))
+    #print(get_today_msg_count())
+    #print(set_watch('张灿阳','5'))
     print(get_today_msg_count())
