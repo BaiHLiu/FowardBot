@@ -192,9 +192,10 @@ def pfm_private(user_id,message,message_id):
             mid = dbconn.save_msg(user_id,message)
 
         #watch功能
-        if(ctime <= datetime.datetime.strftime(user_info['watch_endtime'],'%Y-%m-%d %H:%M:%S')):
-            send_res = goapi_recv.sendMsg(TARGET_USER_ID,f"[{user_info['mark_name']}]\n\n{message}\n===================\n{ctime}\nid={mid}\n类型=watch")
-            return 0
+        if(user_info['watch_endtime'] != '0000-00-00 00:00:00'):
+            if (ctime <= datetime.datetime.strftime(user_info['watch_endtime'],'%Y-%m-%d %H:%M:%S')):
+                send_res = goapi_recv.sendMsg(TARGET_USER_ID,f"[{user_info['mark_name']}]\n\n{message}\n===================\n{ctime}\nid={mid}\n类型=watch")
+                return 0
             
         if('all' in status):
             #转发全部消息
@@ -224,9 +225,10 @@ def pfm_group(user_id,group_id,sender,message):
         dbconn.save_msg(user_id,message,type='group',group_id=group_id)
 
     #watch功能
-    if(ctime <= datetime.datetime.strftime(group_info['watch_endtime'],'%Y-%m-%d %H:%M:%S')):
-        goapi_recv.sendMsg(TARGET_USER_ID,f"[{group_info['group_name']}\n\n{message}\n===================\n{ctime}\n类型=watch")
-        return 0
+    if(group_info['watch_endtime'] != '0000-00-00 00:00:00'):
+        if(ctime <= datetime.datetime.strftime(group_info['watch_endtime'],'%Y-%m-%d %H:%M:%S')):
+            goapi_recv.sendMsg(TARGET_USER_ID,f"[{group_info['group_name']}\n\n{message}\n===================\n{ctime}\n类型=watch")
+            return 0
 
     if(user_info):
         if(user_info['user_type'] in status):
