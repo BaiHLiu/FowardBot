@@ -3,7 +3,7 @@ Descripttion:
 version: 
 Author: Catop
 Date: 2021-03-09 23:14:51
-LastEditTime: 2021-04-10 13:53:36
+LastEditTime: 2021-06-20 17:17:36
 '''
 import sys
 import os
@@ -172,6 +172,8 @@ def admin_conf(user_id,message):
         affected_rows = dbconn.set_watch(watch_user_name,watch_time)
         goapi_recv.sendMsg(TARGET_USER_ID,f"成功设置{affected_rows}行，关注时间{watch_time}分钟。")
 
+    elif(message == 'status'):
+        alert_today_count_job()
 
     return 0
 
