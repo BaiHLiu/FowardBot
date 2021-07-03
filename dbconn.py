@@ -3,7 +3,7 @@ Descripttion:
 version: 
 Author: Catop
 Date: 2021-03-08 22:38:09
-LastEditTime: 2021-04-10 13:47:09
+LastEditTime: 2021-07-04 00:25:39
 '''
 #coding:utf-8
 import os
@@ -254,6 +254,37 @@ def set_watch(user_name,time_period):
     
     return effectRow
 
+def get_days_cont(days):
+    """获取最近days天的统计数据，降序排序"""
+    data_dict = {}
+    cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
+    time_end = datetime.datetime.now()
+    if(days >=1 ):
+        oneday = datetime.timedelta(days=days)
+        time_start = time_end-oneday
+
+        time_end = datetime.datetime.strftime(time_end,"%Y-%m-%d %H:%M:%S")
+        time_start = datetime.datetime.strftime(time_start,"%Y-%m-%d %H:%M:%S")
+        sql = f"SELECT user_id FROM QF_msg WHERE (time>'{time_start}' AND time<'{time_end}')"
+        cursor.execute(sql)
+        msg_list = cursor.fetchall()
+
+        for msg_info in msg_list:
+            #print(msg_info['user_id'])
+            try:
+                user_info = get_friend_info(msg_info['user_id'])
+                if(user_info):
+                    user_name = user_info['mark_name']
+                    if(user_name in data_dict.keys()):
+                        data_dict[user_name] += 1
+                    else:
+                        data_dict[user_name] = 1
+            except:
+                continue
+
+        d_order=sorted(data_dict.items(),key=lambda x:x[1],reverse=True)
+        return d_order
+
 
 if __name__ == "__main__":
     #update_friends_info(goapi_recv.get_friends_list())
@@ -268,4 +299,5 @@ if __name__ == "__main__":
     #print(get_msg(18))
     #print(get_today_msg_count())
     #print(set_watch('张灿阳','5'))
-    print(get_today_msg_count())
+    #print(get_today_msg_count())
+    print(get_days_cont(7))

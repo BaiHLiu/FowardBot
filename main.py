@@ -3,7 +3,7 @@ Descripttion:
 version: 
 Author: Catop
 Date: 2021-03-09 23:14:51
-LastEditTime: 2021-06-20 17:17:36
+LastEditTime: 2021-07-04 00:26:54
 '''
 import sys
 import os
@@ -173,7 +173,25 @@ def admin_conf(user_id,message):
         goapi_recv.sendMsg(TARGET_USER_ID,f"成功设置{affected_rows}行，关注时间{watch_time}分钟。")
 
     elif(message == 'status'):
+        #打印今日消息量统计
         alert_today_count_job()
+
+    elif(message[0:5] == 'count'):
+        #打印指定时间段好友消息top
+        days = message.split(' ')[1]
+        top_list = dbconn.get_days_cont(int(days))
+        msg = f"最近{str(days)}天的消息统计\n"
+        all_msg_cont = 0
+        for cinfo in top_list:
+            all_msg_cont += cinfo[1]
+            if len(cinfo[0]) > 0:
+                msg+=cinfo[0][-6:]+"  "+str(cinfo[1])+"\n"
+
+        msg+=f"\n共计消息量：{str(all_msg_cont)}"
+
+        goapi_recv.sendMsg(TARGET_USER_ID, msg)
+
+
 
     return 0
 
